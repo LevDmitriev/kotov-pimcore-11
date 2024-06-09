@@ -3,26 +3,26 @@ services:
         image: redis:alpine
         command: [ redis-server, --maxmemory 128mb, --maxmemory-policy volatile-lru, --save "" ]
 
-    db:
-        image: mariadb:10.11
-        working_dir: /application
-        command: [ mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --innodb-file-per-table=1 ]
-        volumes:
-            - pimcore-database:/var/lib/mysql
-        environment:
-            - MYSQL_ROOT_PASSWORD=ROOT
-            - MYSQL_DATABASE=pimcore
-            - MYSQL_USER=pimcore
-            - MYSQL_PASSWORD=pimcore
-        healthcheck:
-            # The service is considered healthy when:
-            # - connection to pimcore db can be established, and
-            # - we can run a simple SQL query.
-            test: [ "CMD-SHELL", "mysql -h db -u$$MYSQL_USER -p$$MYSQL_PASSWORD $$MYSQL_DATABASE -e 'SHOW TABLES;'" ]
-            interval: 10s
-            retries: 6
-            start_period: 1m
-            timeout: 3s
+#    db:
+#        image: mariadb:10.11
+#        working_dir: /application
+#        command: [ mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --innodb-file-per-table=1 ]
+#        volumes:
+#            - pimcore-database:/var/lib/mysql
+#        environment:
+#            - MYSQL_ROOT_PASSWORD=ROOT
+#            - MYSQL_DATABASE=pimcore
+#            - MYSQL_USER=pimcore
+#            - MYSQL_PASSWORD=pimcore
+#        healthcheck:
+#            # The service is considered healthy when:
+#            # - connection to pimcore db can be established, and
+#            # - we can run a simple SQL query.
+#            test: [ "CMD-SHELL", "mysql -h db -u$$MYSQL_USER -p$$MYSQL_PASSWORD $$MYSQL_DATABASE -e 'SHOW TABLES;'" ]
+#            interval: 10s
+#            retries: 6
+#            start_period: 1m
+#            timeout: 3s
 
     nginx:
         image: nginx:stable-alpine
@@ -47,19 +47,19 @@ services:
             PIMCORE_INSTALL_MYSQL_PORT: 3306
 #            PIMCORE_INSTALL_MYSQL_HOST_SOCKET: db
             PIMCORE_INSTALL_MYSQL_HOST_SOCKET: rc1b-fifrf29j29hqsgbw.mdb.yandexcloud.net
-            PIMCORE_INSTALL_MYSQL_DATABASE: pimcore
-        depends_on:
-            db:
-                condition: service_healthy
+            PIMCORE_INSTALL_MYSQL_DATABASE: db1
+#        depends_on:
+#            db:
+#                condition: service_healthy
         volumes:
             - .:/var/www/html
 
     supervisord:
         #user: '1000:1000' # set to your uid:gid
         image: pimcore/pimcore:php8.2-supervisord-latest
-        depends_on:
-            db:
-                condition: service_healthy
+#        depends_on:
+#            db:
+#                condition: service_healthy
         volumes:
             - .:/var/www/html
             - ./.docker/supervisord.conf:/etc/supervisor/conf.d/pimcore.conf:ro
