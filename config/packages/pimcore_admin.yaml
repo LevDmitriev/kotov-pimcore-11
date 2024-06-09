@@ -1,4 +1,4 @@
 pimcore_admin:
     csrf_protection:
         excluded_routes:
-            - '^/admin'
+            - pimcore_admin_
