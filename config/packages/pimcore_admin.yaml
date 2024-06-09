@@ -2,3 +2,4 @@ pimcore_admin:
     csrf_protection:
         excluded_routes:
             - pimcore_admin_login
+            - pimcore_admin_login_check
