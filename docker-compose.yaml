@@ -35,7 +35,7 @@ services:
             - php
 
     php:
-        user: '1001:1001' # set to your uid:gid
+        user: '1000:1001' # set to your uid:gid
         image: pimcore/pimcore:php8.2-debug-latest
         environment:
             COMPOSER_HOME: /var/www/html
